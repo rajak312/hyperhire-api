@@ -35,14 +35,15 @@ export class MenuService {
 
   // Add a new menu item
   async addMenu(name: string, parentId: string | null): Promise<Menu> {
-    const menu = await this.prisma.menu.findUnique({
-      where: { id: parentId },
-    });
-    if (!menu) return;
+    let menu;
+    if (parentId)
+      menu = await this.prisma.menu.findUnique({
+        where: { id: parentId },
+      });
     return await this.prisma.menu.create({
       data: {
         name,
-        depth: menu?.depth + 1,
+        depth: menu?.depth || 0 + 1,
         parentId,
       },
     });
