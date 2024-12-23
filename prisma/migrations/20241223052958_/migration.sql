@@ -3,7 +3,7 @@ CREATE TABLE "Menu" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "depth" INTEGER NOT NULL,
-    "parentId" VARCHAR(255),
+    "parentId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -11,4 +11,4 @@ CREATE TABLE "Menu" (
 );
 
 -- AddForeignKey
-ALTER TABLE "Menu" ADD CONSTRAINT "Menu_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Menu"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Menu" ADD CONSTRAINT "Menu_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Menu"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;

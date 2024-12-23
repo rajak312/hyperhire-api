@@ -24,10 +24,8 @@ export class MenuController {
   }
 
   @Post()
-  async addMenu(
-    @Body() body: { name: string; depth: number; parentId: string | null },
-  ) {
-    return this.menuService.addMenu(body.name, body.depth, body.parentId);
+  async addMenu(@Body() body: { name: string; parentId: string | null }) {
+    return this.menuService.addMenu(body.name, body.parentId);
   }
 
   @Put(':id')
