@@ -7,16 +7,7 @@ export class MenuService {
 
   // Fetch all menus hierarchically
   async getMenus(): Promise<Menu[]> {
-    return await this.prisma.menu.findMany({
-      where: { parentId: null }, // Start from root menus
-      include: {
-        children: {
-          include: {
-            children: true, // Recursively fetch children
-          },
-        },
-      },
-    });
+    return await this.fetchMenusWithChildren();
   }
 
   // Fetch a single menu with its children
@@ -40,13 +31,16 @@ export class MenuService {
       menu = await this.prisma.menu.findUnique({
         where: { id: parentId },
       });
-    return await this.prisma.menu.create({
+    console.log('menu added', menu);
+    const data = await this.prisma.menu.create({
       data: {
         name,
-        depth: menu?.depth || 0 + 1,
+        depth: (menu?.depth || 0) + 1,
         parentId,
       },
     });
+    console.log('data', data);
+    return data;
   }
 
   // Update an existing menu item
@@ -62,5 +56,24 @@ export class MenuService {
     return await this.prisma.menu.delete({
       where: { id },
     });
+  }
+
+  private async fetchMenusWithChildren(
+    parentId: string | null = null,
+  ): Promise<Menu[]> {
+    const menus = await this.prisma.menu.findMany({
+      where: { parentId },
+      include: {
+        children: true,
+      },
+    });
+
+    for (const menu of menus) {
+      if (menu.children.length > 0) {
+        menu.children = await this.fetchMenusWithChildren(menu.id);
+      }
+    }
+
+    return menus;
   }
 }
