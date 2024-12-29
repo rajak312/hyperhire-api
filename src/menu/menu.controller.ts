@@ -18,6 +18,11 @@ export class MenuController {
     return this.menuService.getMenus();
   }
 
+   @Get('tree/:id')
+  async getMenuTree(@Param('id') id: string) {
+    return this.menuService.getMenuTree(id);
+  }
+
   @Get(':id')
   async getMenuById(@Param('id') id: string) {
     return this.menuService.getMenuById(id);

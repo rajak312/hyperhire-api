@@ -7,7 +7,30 @@ export class MenuService {
 
   // Fetch all menus hierarchically
   async getMenus(): Promise<Menu[]> {
-    return await this.fetchMenusWithChildren();
+    return await this.prisma.findMany()
+  }
+
+  async getMenusTree():Promise<Menu[]>{
+      return await this.fetchMenusWithChildren();
+  }
+
+
+  async getMenuTree(id: string): Promise<Menu | null> {
+    const menu = await this.prisma.menu.findUnique({
+      where: { id },
+      include: {
+        children: true, // Fetch immediate children
+      },
+    });
+
+    if (!menu) {
+      return null;
+    }
+
+    // Recursively fetch children
+    menu.children = await this.fetchMenusWithChildren(menu.id);
+
+    return menu;
   }
 
   // Fetch a single menu with its children
