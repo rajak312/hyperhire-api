@@ -10,6 +10,7 @@ async function bootstrap() {
   });
   const PORT = process.env.PORT ?? 3000;
   await app.listen(PORT);
+  console.log('TEST', process.env.TEST);
   console.info('Info: Application running on PORT', PORT);
 }
 bootstrap();
