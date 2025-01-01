@@ -15,10 +15,12 @@ export class MenuController {
 
   @Get()
   async getMenus() {
+    console.log('test', process.env.DATABASE_URL);
+
     return this.menuService.getMenus();
   }
 
-   @Get('tree/:id')
+  @Get('tree/:id')
   async getMenuTree(@Param('id') id: string) {
     return this.menuService.getMenuTree(id);
   }
