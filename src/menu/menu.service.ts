@@ -5,7 +5,6 @@ import { PrismaClient, Menu } from '@prisma/client';
 export class MenuService {
   private prisma = new PrismaClient();
 
-  // Fetch all menus hierarchically
   async getMenus(): Promise<Menu[]> {
     return await this.prisma.menu.findMany();
   }
@@ -18,7 +17,7 @@ export class MenuService {
     const menu = await this.prisma.menu.findUnique({
       where: { id },
       include: {
-        children: true, // Fetch immediate children
+        children: true,
       },
     });
 
@@ -26,34 +25,30 @@ export class MenuService {
       return null;
     }
 
-    // Recursively fetch children
     menu.children = await this.fetchMenusWithChildren(menu.id);
 
     return menu;
   }
 
-  // Fetch a single menu with its children
   async getMenuById(id: string): Promise<Menu | null> {
     return await this.prisma.menu.findUnique({
       where: { id },
       include: {
         children: {
           include: {
-            children: true, // Recursively fetch children
+            children: true,
           },
         },
       },
     });
   }
 
-  // Add a new menu item
   async addMenu(name: string, parentId: string | null): Promise<Menu> {
     let menu;
     if (parentId)
       menu = await this.prisma.menu.findUnique({
         where: { id: parentId },
       });
-    console.log('menu added', menu);
     const data = await this.prisma.menu.create({
       data: {
         name,
@@ -61,11 +56,9 @@ export class MenuService {
         parentId,
       },
     });
-    console.log('data', data);
     return data;
   }
 
-  // Update an existing menu item
   async updateMenu(id: string, name: string): Promise<Menu> {
     return await this.prisma.menu.update({
       where: { id },
@@ -73,7 +66,6 @@ export class MenuService {
     });
   }
 
-  // Delete a menu item
   async deleteMenu(id: string): Promise<Menu> {
     return await this.prisma.menu.delete({
       where: { id },
